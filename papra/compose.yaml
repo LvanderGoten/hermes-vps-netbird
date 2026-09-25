@@ -1,0 +1,15 @@
+# /opt/papra/compose.yaml — Papra, reachable only on loopback and the NetBird address
+services:
+  papra:
+    image: ghcr.io/papra-hq/papra:26.6.2-rootless
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      APP_BASE_URL: ${PUBLIC_URL}
+      AUTH_SECRET: ${PAPRA_AUTH_SECRET}
+      AUTH_IS_REGISTRATION_ENABLED: ${PAPRA_REGISTRATION:-true}
+    ports:
+      - "127.0.0.1:1221:1221"
+      - "${NETBIRD_IP}:1221:1221"
+    volumes:
+      - ./app-data:/app/app-data

@@ -1,0 +1,19 @@
+# /etc/systemd/system/hermes-dashboard.service
+# Hermes web dashboard on the NetBird address only; password login is configured in ~hermes/.hermes.
+[Unit]
+Description=Hermes Agent dashboard (NetBird only)
+Wants=network-online.target netbird.service
+After=network-online.target netbird.service
+
+[Service]
+User=hermes
+WorkingDirectory=/home/hermes
+ExecStart=/home/hermes/.local/bin/hermes dashboard --host ${NETBIRD_IP} --port 9119 --no-open
+EnvironmentFile=/etc/hermes-dashboard.env
+Restart=always
+RestartSec=10
+RestartPreventExitStatus=78
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

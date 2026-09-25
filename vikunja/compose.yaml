@@ -1,0 +1,17 @@
+# /opt/vikunja/compose.yaml — Vikunja, reachable only on loopback and the NetBird address
+services:
+  vikunja:
+    image: vikunja/vikunja:2.6.0
+    restart: unless-stopped
+    environment:
+      VIKUNJA_SERVICE_PUBLICURL: ${PUBLIC_URL}
+      VIKUNJA_SERVICE_JWTSECRET: ${VIKUNJA_JWT_SECRET}
+      VIKUNJA_SERVICE_ENABLEREGISTRATION: ${VIKUNJA_REGISTRATION:-true}
+      VIKUNJA_DATABASE_TYPE: sqlite
+      VIKUNJA_DATABASE_PATH: /db/vikunja.db
+    ports:
+      - "127.0.0.1:3456:3456"
+      - "${NETBIRD_IP}:3456:3456"
+    volumes:
+      - ./files:/app/vikunja/files
+      - ./db:/db
