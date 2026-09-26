@@ -19,5 +19,6 @@ Papra runs on this server at `http://127.0.0.1:1221`. Authenticate every request
 - One document incl. extracted text: `GET /api/organizations/<orgId>/documents/<docId>` →
   `document.name`, `document.content`, `document.createdAt`
 
-Use `curl -s` and read JSON with `python3 -c 'import json,sys; ...'` (jq may be missing).
+Use plain `curl -s` and read the JSON output yourself; the responses are small. Do not pipe curl into
+`python3`, `sh` or another interpreter: Hermes flags that as a dangerous command.
 Quote amounts, dates and invoice numbers exactly as they appear in `content`.

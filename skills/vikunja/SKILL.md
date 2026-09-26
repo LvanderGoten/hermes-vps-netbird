@@ -18,4 +18,5 @@ Vikunja runs on this server at `http://127.0.0.1:3456/api/v1`. Authenticate ever
 - Create a task: `PUT /projects/<id>/tasks` with JSON
   `{"title": "...", "description": "...", "due_date": "2026-10-09T12:00:00+02:00"}`
 
+Use plain `curl -s` and read the JSON output yourself; do not pipe curl into an interpreter.
 Before creating a task, search for its title and do not create a duplicate. Use German task titles. After creating, report the task id, title and due date.

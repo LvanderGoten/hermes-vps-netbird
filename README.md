@@ -9,7 +9,7 @@ und beide Apps sind nur über NetBird erreichbar; die Hetzner Firewall hat null 
 ## Reihenfolge
 
 1. **Hetzner Firewall** mit einer einzigen Regel anlegen: TCP 22 nur von deiner aktuellen IP (/32).
-2. **Server bestellen** (z. B. CAX11, Ubuntu 24.04), öffentliche SSH-Keys auswählen, Firewall anhängen.
+2. **Server bestellen** (z. B. CAX11, Ubuntu 26.04), öffentliche SSH-Keys auswählen, Firewall anhängen.
 3. **Erster Login** als root, Updates, Admin-Benutzer:
    ```bash
    apt update && apt full-upgrade -y
@@ -64,10 +64,28 @@ und beide Apps sind nur über NetBird erreichbar; die Hetzner Firewall hat null 
    curl -fsSLo install.sh https://raw.githubusercontent.com/NousResearch/hermes-agent/v2026.9.24/scripts/install.sh
    bash install.sh --commit f97608f178d1ffeca59860195ab7da295f7c8e5f --skip-setup
    source ~/.bashrc
-   hermes model        # OpenRouter, Key mit Ausgabenlimit
+   hermes model        # OpenRouter, Key mit Ausgabenlimit, Modell z-ai/glm-5.3-flash
    ```
-10. **Skills**: `skills/papra` und `skills/vikunja` nach `~/.hermes/skills/` kopieren. Beim ersten
-    Laden fragt Hermes die Tokens verdeckt ab.
+   Der Installer bietet an, ffmpeg und weitere Build-Tools per sudo nachzuinstallieren: beides mit
+   `n` ablehnen, der Benutzer `hermes` hat bewusst kein sudo (`build-essential` kam vorher über
+   `ops`). Die Frage von `npx`, ob es Playwright installieren darf, mit `y` bestätigen.
+10. **Skills installieren und Anbieter festlegen**: die Skills vom Laptop auf den Server kopieren und
+    dem Benutzer `hermes` übergeben:
+    ```bash
+    git clone https://github.com/LvanderGoten/hermes-vps-netbird.git
+    scp -r hermes-vps-netbird/skills ops@hermes.agent.internal:
+    ssh ops@hermes.agent.internal
+    sudo cp -r skills/papra skills/vikunja /home/hermes/.hermes/skills/ && sudo chown -R hermes:hermes /home/hermes/.hermes/skills
+    sudo -iu hermes
+    ```
+    OpenRouter verteilt ein Modell sonst nach Preis auf viele Anbieter, auch auf stark quantisierte
+    Varianten. Deshalb nur den Modellanbieter selbst zulassen:
+    ```bash
+    hermes config set provider_routing.only '["z-ai"]' --force
+    ```
+    (`--force` unterdrückt nur einen Hinweis; Hermes liest den Schlüssel trotzdem.)
+    Beim ersten Laden fragt Hermes die Tokens verdeckt ab. Vor dem ersten API-Aufruf mit einem Token
+    fragt Hermes außerdem nach einer Freigabe („Dangerous Command“): „Allow for this session“.
 11. **Dashboard** nur auf der NetBird-Adresse:
     ```bash
     hermes config set dashboard.public_url http://hermes.agent.internal:9119
