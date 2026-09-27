@@ -8,7 +8,7 @@ After=network-online.target netbird.service
 [Service]
 User=hermes
 WorkingDirectory=/home/hermes
-ExecStart=/home/hermes/.local/bin/hermes dashboard --host ${NETBIRD_IP} --port 9119 --no-open
+ExecStart=/home/hermes/.local/bin/hermes dashboard --host ${NETBIRD_IP} --port 9119 --no-open --skip-build
 EnvironmentFile=/etc/hermes-dashboard.env
 Restart=always
 RestartSec=10
