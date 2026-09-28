@@ -11,6 +11,10 @@ und beide Apps sind nur über NetBird erreichbar; die Hetzner Firewall hat null 
 1. **Hetzner Firewall** mit einer einzigen Regel anlegen: TCP 22 nur von deiner aktuellen IP (/32).
 2. **Server bestellen** (z. B. CAX11, Ubuntu 26.04), öffentliche SSH-Keys auswählen, Firewall anhängen.
 3. **Erster Login** als root, Updates, Admin-Benutzer:
+   Beim ersten SSH-Login den angezeigten Host-Key-Fingerabdruck mit einer unabhängigen Quelle
+   vergleichen, zum Beispiel mit `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` in der
+   Hetzner-Serverkonsole. Erst danach die `yes`-Abfrage bestätigen. Ein Scan desselben
+   Netzwerkwegs ist keine unabhängige Prüfung.
    ```bash
    apt update && apt full-upgrade -y
    adduser --gecos "" ops
@@ -32,6 +36,10 @@ und beide Apps sind nur über NetBird erreichbar; die Hetzner Firewall hat null 
    unset NB_SETUP_KEY
    netbird status
    ```
+   Meldet der Installer `Init already exists`, zunächst den tatsächlichen Zustand prüfen:
+   `systemctl status netbird`, `netbird status` und einen frischen privaten Verbindungsversuch.
+   Im Video folgten auf diese Warnung ein gestarteter Dienst und eine erfolgreiche Verbindung;
+   die Meldung allein beweist weder Erfolg noch Fehlschlag.
    Gruppen `admins` (Laptop) und `agents` (Server). Zugriffsregeln (eine Richtung,
    `admins` → `agents`): TCP 22 und TCP 3456, 1221, 9119.
    Unter **DNS → Zones** eine private Zone `agent.internal` für beide Gruppen anlegen, mit den
@@ -69,6 +77,11 @@ und beide Apps sind nur über NetBird erreichbar; die Hetzner Firewall hat null 
    Der Installer bietet an, ffmpeg und weitere Build-Tools per sudo nachzuinstallieren: beides mit
    `n` ablehnen, der Benutzer `hermes` hat bewusst kein sudo (`build-essential` kam vorher über
    `ops`). Die Frage von `npx`, ob es Playwright installieren darf, mit `y` bestätigen.
+   Der aufgezeichnete Start zeigte `3348 commits behind`: Das ist die Folge des bewusst
+   gepinnten Commits, keine Zusage über aktuelle Sicherheitsupdates. Außerdem meldete Hermes,
+   dass der optionale Tirith-Scanner nicht verfügbar ist und nur Pattern Matching verwendet.
+   Diese Prüfung nicht als vollständigen Schutz für ausgeführte Befehle verstehen. Pin regelmäßig
+   überprüfen und Updates zunächst getrennt testen.
 10. **Skills installieren und Anbieter festlegen**: die Skills vom Laptop auf den Server kopieren und
     dem Benutzer `hermes` übergeben:
     ```bash
@@ -94,6 +107,13 @@ und beide Apps sind nur über NetBird erreichbar; die Hetzner Firewall hat null 
     Dauerhaft als Dienst: `hermes/hermes-dashboard.service` nach `/etc/systemd/system/`, dazu
     `/etc/hermes-dashboard.env` mit `NETBIRD_IP=…`, dann `sudo systemctl enable --now hermes-dashboard`.
 12. **Gegenprobe und Neustart**: alle vier Ports von außen testen, neu starten, erneut testen.
+
+## HTTPS für die privaten Webdienste
+
+Im Video bleiben Hermes, Vikunja und Papra auf privaten HTTP-Adressen mit Portnummer. NetBird
+verschlüsselt den Transport zwischen den Peers. Der Browser zeigt für die Apps trotzdem HTTP an;
+die Anwendung selbst bekommt keine HTTPS-Verbindung. Wer Browser-HTTPS oder Adressen ohne Port
+möchte, findet die Optionen und ihre zusätzlichen Schritte in [HTTPS-OPTIONEN.md](HTTPS-OPTIONEN.md).
 
 ## Grenzen
 
