@@ -3,6 +3,8 @@
 Begleit-Repo zum Video. Hier liegen nur die Dateien, die man sonst aus Dokumentationen abtippen
 müsste. Keine Schlüssel, keine echten IP-Adressen, keine persönliche Konfiguration.
 
+> Lernbeispiel ohne Gewähr – Nutzung auf eigene Verantwortung. Siehe [Haftungsausschluss](#haftungsausschluss).
+
 Ergebnis: Hermes Agent, Papra und Vikunja laufen auf einem kleinen VPS. SSH, das Hermes-Dashboard
 und beide Apps sind nur über NetBird erreichbar; die Hetzner Firewall hat null eingehende Regeln.
 
@@ -120,3 +122,23 @@ möchte, findet die Optionen und ihre zusätzlichen Schritte in [HTTPS-OPTIONEN.
 Wer dein NetBird-Konto übernimmt, steht im selben Netz: Mehrfaktor-Anmeldung einschalten.
 Updates und Backups bleiben deine Aufgabe. Was Hermes darf, bestimmen die Rechte seiner Tokens
 und sein Linux-Benutzer, nicht das Netz.
+
+Hermes kann seine eigenen Tokens lesen: Sie liegen unter dem Benutzer `hermes` in
+`~/.hermes/.env`. Liest er Inhalte von außen – eine Rechnung, eine E-Mail, eine Webseite –, können
+darin Anweisungen versteckt sein (Prompt Injection). Ausgehende Verbindungen sind in diesem Aufbau
+offen, ein so manipulierter Agent könnte also Daten nach außen schicken. Wer mit echten Dokumenten
+arbeitet, sollte ausgehenden Verkehr für den Benutzer `hermes` auf die nötigen Ziele beschränken
+und Befehle mit Tokens einzeln freigeben („Allow once“) statt für die ganze Sitzung.
+
+## Haftungsausschluss
+
+Dieses Repo und das Video zeigen ein persönliches Lernbeispiel, keine geprüfte Sicherheitslösung.
+Die Dateien werden ohne Gewähr bereitgestellt; die Nutzung erfolgt auf eigene Verantwortung. Ich
+übernehme keine Verantwortung für die Sicherheit von Systemen, die nach dieser Anleitung
+eingerichtet werden, und keine Haftung für Schäden, Datenverluste oder Kosten, die daraus
+entstehen, soweit das gesetzlich zulässig ist. Prüfe jede Konfiguration selbst, bevor du sie mit
+echten Daten einsetzt.
+
+## Lizenz
+
+[MIT](LICENSE)
